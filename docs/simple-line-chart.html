@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Simple line chart</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Simple line chart</h1>
+    <p>Display data/example01.csv as a simple line chart.</p>
+    <div id="chart-goes-here" class="chart-enclosure"></div>
+    <script type="text/javascript" src="//d3js.org/d3.v4.min.js"></script>
+    <script type="text/javascript" src="simple-line-chart.js"></script>
+    <script type="text/javascript">
+      simpleLineChart('data/simple-line-chart.csv', 'week', 'amount', '#chart-goes-here', 800, 200);
+    </script>
+  </body>
+</html>
