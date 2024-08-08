@@ -33,7 +33,23 @@
       const width = 800 - margin.left - margin.right;
       const height = 400 - margin.top - margin.bottom;
 
-      simpleLineChart('data/simple-line-chart.csv', 'week', 'amount', '#chart-goes-here', width, height, margin);
+      // If displayXAxisPlotting is true to then X axis displayed in chart.
+      const displayXAxisPlotting = true;
+      // If displayYAxisPlotting is true to then Y axis displayed in chart.
+      const displayYAxisPlotting = true;
+
+
+      simpleLineChart(
+        'data/simple-line-chart.csv',
+        'week',
+        'amount',
+        '#chart-goes-here',
+        width,
+        height,
+        margin,
+        displayXAxisPlotting,
+        displayYAxisPlotting
+      );
     </script>
   </body>
 </html>
