@@ -15,7 +15,7 @@
  *
  * See https://d3-graph-gallery.com/graph/shape.html#myline.
  */
- function multipleLineChart(source, chartLocation, width, height, margin) {
+function multipleLineChart(source, chartLocation, width, height, margin) {
     /*
         Create SVG element
         chartLocation is a selector string or a reference to an
@@ -24,35 +24,35 @@
         an element with the ID chart.
     */
     const svg = d3.select(chartLocation).append("svg")
-    /*
-        Sets the width of the SVG element.
-        Total width including margins then only x,y axis rendered completely inside chart.
-    */
-    .attr("width", width + margin.left + margin.right)
-    /*
-        Sets the height of the SVG element.
-        Total height including margins then only x,y axis rendered completely inside chart.
-    */
-    .attr("height", height + margin.top + margin.bottom)
-    /*
-        append("g") Appends a group element (<g>) to the SVG container.
-        Explanation:
-            The <g> element is used to group other SVG elements
-        together. It is often used to apply transformations and 
-        styling to a collection of elements. By appending this 
-        <g> element, you create a group that can be transformed or
-        styled as a unit.
-    */
-    .append("g")
-    /*
-        .attr("transform", translate(${margin.left},${margin.top})): 
-        Moves the group element to account for margins, so the
-        actual chart area starts after the margin space.
-    */
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+        /*
+            Sets the width of the SVG element.
+            Total width including margins then only x,y axis rendered completely inside chart.
+        */
+        .attr("width", width + margin.left + margin.right)
+        /*
+            Sets the height of the SVG element.
+            Total height including margins then only x,y axis rendered completely inside chart.
+        */
+        .attr("height", height + margin.top + margin.bottom)
+        /*
+            append("g") Appends a group element (<g>) to the SVG container.
+            Explanation:
+                The <g> element is used to group other SVG elements
+            together. It is often used to apply transformations and 
+            styling to a collection of elements. By appending this 
+            <g> element, you create a group that can be transformed or
+            styled as a unit.
+        */
+        .append("g")
+        /*
+            .attr("transform", translate(${margin.left},${margin.top})): 
+            Moves the group element to account for margins, so the
+            actual chart area starts after the margin space.
+        */
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Read the CSV file.
-    d3.csv(source).then(function(data) {
+    d3.csv(source).then(function (data) {
         /*
             Parse data: convert strings to numbers
             week, amount1, amount2, amount3 are column names.
@@ -66,58 +66,57 @@
 
         /*
             Define scales and axes
-            Create scales
             d3.scaleLinear() is a function from D3.js that creates
             a linear scale. Linear scales map numerical data values to
             a continuous range of pixel values. It’s used for axes
             where the data is distributed in a linear fashion.
         */
         const x = d3.scaleLinear()
-        /*
-            d3.extent(data, d => d[week]) calculates the 
-            extent (i.e., minimum and maximum) of the data values for 
-            the x-axis.
-            data is your dataset (an array of objects).
-            d => d[week] is a function that extracts the value
-            corresponding to week from each data object. 
-            d3.extent returns an array with two values: the minimum 
-            and maximum values in the dataset for the specified key.
-            This array sets the domain of the scale.
-        */
-        .domain(d3.extent(data, d => d.week))
-        /*
-            range specifies the range of pixel values the data values will be mapped to.
-            [0, width] means that the smallest data value will be
-            mapped to pixel position 0, and the largest data value will
-            be mapped to pixel position width. If width is,
-            for example, 730 pixels, then the data values will be
-            mapped from 0 to 730 pixels along the x-axis.
-        */
-        .range([0, width]);
+            /*
+                d3.extent(data, d => d[week]) calculates the 
+                extent (i.e., minimum and maximum) of the data values for 
+                the x-axis.
+                data is your dataset (an array of objects).
+                d => d[week] is a function that extracts the value
+                corresponding to week from each data object. 
+                d3.extent returns an array with two values: the minimum 
+                and maximum values in the dataset for the specified key.
+                This array sets the domain of the scale.
+            */
+            .domain(d3.extent(data, d => d.week))
+            /*
+                range specifies the range of pixel values the data values will be mapped to.
+                [0, width] means that the smallest data value will be
+                mapped to pixel position 0, and the largest data value will
+                be mapped to pixel position width. If width is,
+                for example, 730 pixels, then the data values will be
+                mapped from 0 to 730 pixels along the x-axis.
+            */
+            .range([0, width]);
 
         /*
             Linear scales map numerical data values to
             a continuous range of pixel values 
         */
         const y = d3.scaleLinear()
-        /*
-            The .domain() method defines the input range for the scale.
-            In this case, 0 is the minimum value, ensuring that the scale starts at zero.
-            d3.max(data, d => Math.max(d.amount1, d.amount2, d.amount3)) calculates
-            the maximum value of all the amounts across the data, ensuring that the
-            scale can accommodate the highest value found in the dataset.
-            This setup is particularly useful in line charts where you want the y-axis
-            to dynamically adjust to the range of values in your data, ensuring that all
-            lines fit well within the chart’s vertical space.
-        */
-        .domain([0, d3.max(data, d => Math.max(d.amount1, d.amount2, d.amount3))])
-        /*
-           .range([height, 0]) sets the output range of the scale.
-           It maps data values to pixel positions on the y-axis, where 
-           height corresponds to the bottom of the chart and 0 
-           corresponds to the top.
-        */
-        .range([height, 0]);
+            /*
+                The .domain() method defines the input range for the scale.
+                In this case, 0 is the minimum value, ensuring that the scale starts at zero.
+                d3.max(data, d => Math.max(d.amount1, d.amount2, d.amount3)) calculates
+                the maximum value of all the amounts across the data, ensuring that the
+                scale can accommodate the highest value found in the dataset.
+                This setup is particularly useful in line charts where you want the y-axis
+                to dynamically adjust to the range of values in your data, ensuring that all
+                lines fit well within the chart’s vertical space.
+            */
+            .domain([0, d3.max(data, d => Math.max(d.amount1, d.amount2, d.amount3))])
+            /*
+               .range([height, 0]) sets the output range of the scale.
+               It maps data values to pixel positions on the y-axis, where 
+               height corresponds to the bottom of the chart and 0 
+               corresponds to the top.
+            */
+            .range([height, 0]);
 
         /*
             d3.axisBottom(x): Creates a bottom-oriented axis using the x scale.
@@ -168,11 +167,10 @@
             .y(d => y(d.value));
 
         /*
-            Create line paths.
             This code creates and configures three separate line paths for a line chart
             within the SVG element. Each line represents a different data series
             (amount1, amount2, amount3).        
-        */            
+        */
         const amountLines = {
             amount1: svg.append('path')
                 .attr('class', 'line')
@@ -223,11 +221,11 @@
         // Initial rendering of lines
         updateLines();
 
-        // Add event listeners to checkboxes
+        // Add event listeners to checkboxes.
         document.getElementById('checkbox-amount1').addEventListener('change', updateLines);
         document.getElementById('checkbox-amount2').addEventListener('change', updateLines);
-        document.getElementById('checkbox-amount3').addEventListener('change', updateLines);        
+        document.getElementById('checkbox-amount3').addEventListener('change', updateLines);
     }).catch(error => {
         console.error('Error loading or parsing data:', error);
     });
- }
+}

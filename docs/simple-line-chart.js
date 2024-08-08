@@ -16,10 +16,24 @@
  *   Height of the chart.
  * @param {int} margin
  *   Margins provides padding around the chart.
+ * @param {bool} displayXAxisPlotting
+ *   If displayXAxisPlotting is true to then X axis displayed in chart.
+ * @param {bool} displayYAxisPlotting
+ *   If displayYAxisPlotting is true to then Y axis displayed in chart.
  *
  * See https://d3-graph-gallery.com/graph/shape.html#myline.
  */
-function simpleLineChart(source, xAxisLabel, yAxisLabel, chartLocation, width, height, margin) {
+function simpleLineChart(
+  source,
+  xAxisLabel,
+  yAxisLabel,
+  chartLocation,
+  width,
+  height,
+  margin,
+  displayXAxisPlotting,
+  displayYAxisPlotting
+) {
   /*
     Create SVG element
     chartLocation is a selector string or a reference to an
@@ -28,10 +42,16 @@ function simpleLineChart(source, xAxisLabel, yAxisLabel, chartLocation, width, h
     an element with the ID chart.
   */
   const svg = d3.select(chartLocation).append("svg")
-    // Sets the width of the SVG element.
-    .attr("width", width)
-    // Sets the height of the SVG element.
-    .attr("height", height)
+    /*
+      Sets the width of the SVG element.
+      Total width including margins then only x,y axis rendered completely inside chart.
+    */
+    .attr("width", width + margin.left + margin.right)
+    /*
+      Sets the height of the SVG element.
+      Total height including margins then only x,y axis rendered completely inside chart.
+    */
+    .attr("height", height + margin.top + margin.bottom)
     /*
       append("g") Appends a group element (<g>) to the SVG container.
       Explanation:
@@ -149,9 +169,42 @@ function simpleLineChart(source, xAxisLabel, yAxisLabel, chartLocation, width, h
       .attr('stroke', 'black')
       // .attr('fill', 'none') ensures no fill color inside the path.
       .attr('fill', 'none')
-      // .attr("d", line) uses the line generator function to
-      // generate the path data string for the line chart. 
+      /*
+        .attr("d", line) uses the line generator function to
+        generate the path data string for the line chart. 
+      */
       .attr("d", line);
+
+      if (displayXAxisPlotting)
+        /*
+          Append the x-axis to the SVG
+          A group element (<g>) for the x-axis is appended to the SVG.
+        */
+        svg.append("g")
+        // Move the x-axis to the bottom of the chart
+        .attr("transform", `translate(0,${height})`)
+        /*
+          Create and render the x-axis with ticks
+          d3.axisBottom(xScale) is used to generate the bottom axis,
+          and .ticks(data.length) customizes the number of ticks.
+          The axis is then rendered in the group element using .call()
+        */
+        .call(d3.axisBottom(xScale).ticks(data.length));
+
+    if (displayYAxisPlotting)
+      /*
+        Append the y-axis to the SVG
+        A group element (<g>) for the y-axis is appended to the SVG.
+      */
+      svg.append("g")
+      /*
+        Create and render the y-axis
+        .call(d3.axisLeft(yScale)) generates and renders a vertical axis
+        on the left side of the chart based on the yScale.
+        This axis will have ticks and labels corresponding to the values
+        defined in yScale, helping to visually represent the y-values of your data.
+      */
+      .call(d3.axisLeft(yScale));
   }).catch(error => {
     console.error('Error loading or parsing data:', error);
   });
