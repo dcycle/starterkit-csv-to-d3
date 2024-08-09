@@ -1,39 +1,59 @@
 <!doctype html>
 <html>
   <head>
-    <title>Simple line chart</title>
+    <title>Multiple line chart</title>
     <link rel="stylesheet" href="style.css">
     <style>
       .line {
-        /* Thickness of the line */        
-        stroke-width: 2px;
+        fill: none;
+        /* Thickness of the line */
+        stroke-width: 1px;
+      }
+      .checkbox-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .legend {
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      .tooltip {
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 5px;
+        pointer-events: none;
+        visibility: hidden;
       }
     </style>
   </head>
   <body>
-    <h1>Simple line chart</h1>
-    <p>Display data/simple-line-chart.csv as a simple line chart.</p>
+    <h1>Multiple line chart</h1>
+    <p>Display data/line-chart-multiple-lines.csv as a multiple line chart.</p>
+    <div class="checkbox-container"></div>
     <div id="chart-goes-here" class="chart-enclosure"></div>
     <script type="text/javascript" src="//d3js.org/d3.v7.min.js"></script>
-    <script type="text/javascript" src="simple-line-chart.js"></script>
+    <script type="text/javascript" src="line-chart-multiple-lines.js"></script>
     <script type="text/javascript">
-      // Set dimensions
       /*
+        Set dimensions
         Margins provide padding around the chart, ensuring
         that axis labels and titles are not crowded or clipped.
         They also prevent data points from being too close to
         the edges of the chart.
       */
       const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-
       /*
         Width and Height determine the size of the area where
         the actual chart is drawn. These values are derived by
         subtracting the margins from the total SVG dimensions,
         giving you the drawable area for your chart elements
         (like lines, points, and axes).
+        Define margins, width, and height
       */
-      const width = 800 - margin.left - margin.right;
+      const width = 1200 - margin.left - margin.right;
       const height = 400 - margin.top - margin.bottom;
 
       // If displayXAxisPlotting is true to then X axis displayed in chart.
@@ -41,11 +61,8 @@
       // If displayYAxisPlotting is true to then Y axis displayed in chart.
       const displayYAxisPlotting = true;
 
-
-      simpleLineChart(
-        'data/simple-line-chart.csv',
-        'week',
-        'amount',
+      multipleLineChart(
+        'data/line-chart-multiple-lines.csv',
         '#chart-goes-here',
         width,
         height,
