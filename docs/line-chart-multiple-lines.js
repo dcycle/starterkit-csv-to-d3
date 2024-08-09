@@ -2,7 +2,7 @@
  * Display a multiple line chart.
  *
  * @param {string} source
- *   A location such as data/line-chart-multiple-lines.csv.
+ *   A location such as data/multivalued-1000-rows-20-columns.csv
  * @param {string} chartLocation
  *   An element on the page, often a div with an id, where the chart will be
  *   displayed.
@@ -12,10 +12,23 @@
  *   Height of the chart.
  * @param {int} margin
  *   Margins provides padding around the chart.
+ * @param {bool} displayXAxisPlotting
+ *   If displayXAxisPlotting is true to then X axis displayed in chart.
+ * @param {bool} displayYAxisPlotting
+ *   If displayYAxisPlotting is true to then Y axis displayed in chart.
  *
  * See https://d3-graph-gallery.com/graph/shape.html#myline.
  */
-function multipleLineChart(source, chartLocation, width, height, margin) {
+function multipleLineChart(
+    source,
+    chartLocation,
+    width,
+    height,
+    margin,
+    displayXAxisPlotting,
+    displayYAxisPlotting
+) {
+
     /*
         Create SVG element
         chartLocation is a selector string or a reference to an
@@ -53,15 +66,18 @@ function multipleLineChart(source, chartLocation, width, height, margin) {
 
     // Read the CSV file.
     d3.csv(source).then(function (data) {
+        // Identify the X-axis column (first column)
+        const xAxisColumn = Object.keys(data[0])[0];
+
+        // Extract Y-axis columns (all columns except the first one)
+        const columns = Object.keys(data[0]).slice(1);
+
         /*
-            Parse data: convert strings to numbers
-            week, amount1, amount2, amount3 are column names.
+          Parse data: convert strings to numbers
         */
         data.forEach(d => {
-            d.week = +d.week;
-            d.amount1 = +d.amount1;
-            d.amount2 = +d.amount2;
-            d.amount3 = +d.amount3;
+            d[xAxisColumn] = +d[xAxisColumn];
+            columns.forEach(column => d[column] = +d[column]);
         });
 
         /*
@@ -73,17 +89,17 @@ function multipleLineChart(source, chartLocation, width, height, margin) {
         */
         const x = d3.scaleLinear()
             /*
-                d3.extent(data, d => d[week]) calculates the 
+                d3.extent(data, d => d[xAxisColumn]) calculates the
                 extent (i.e., minimum and maximum) of the data values for 
                 the x-axis.
                 data is your dataset (an array of objects).
-                d => d[week] is a function that extracts the value
-                corresponding to week from each data object. 
+                d => d[xAxisColumn] is a function that extracts the value
+                corresponding to xAxisColumn from each data object.
                 d3.extent returns an array with two values: the minimum 
                 and maximum values in the dataset for the specified key.
                 This array sets the domain of the scale.
             */
-            .domain(d3.extent(data, d => d.week))
+            .domain(d3.extent(data, d => d[xAxisColumn]))
             /*
                 range specifies the range of pixel values the data values will be mapped to.
                 [0, width] means that the smallest data value will be
@@ -102,14 +118,14 @@ function multipleLineChart(source, chartLocation, width, height, margin) {
             /*
                 The .domain() method defines the input range for the scale.
                 In this case, 0 is the minimum value, ensuring that the scale starts at zero.
-                d3.max(data, d => Math.max(d.amount1, d.amount2, d.amount3)) calculates
-                the maximum value of all the amounts across the data, ensuring that the
-                scale can accommodate the highest value found in the dataset.
+                d3.max(data, d => d3.max(columns, col => d[col])) calculates
+                the maximum value of all the other columns across the data(except first column),
+                ensuring that the scale can accommodate the highest value found in the dataset.
                 This setup is particularly useful in line charts where you want the y-axis
                 to dynamically adjust to the range of values in your data, ensuring that all
                 lines fit well within the chart’s vertical space.
             */
-            .domain([0, d3.max(data, d => Math.max(d.amount1, d.amount2, d.amount3))])
+            .domain([0, d3.max(data, d => d3.max(columns, col => d[col]))])
             /*
                .range([height, 0]) sets the output range of the scale.
                It maps data values to pixel positions on the y-axis, where 
@@ -131,60 +147,65 @@ function multipleLineChart(source, chartLocation, width, height, margin) {
         */
         const yAxis = d3.axisLeft(y);
 
-        /*
-            The append('g') method adds a new group element to the SVG. This group element
-            will contain all the parts of the x-axis (ticks, labels, etc.).
-        */
-        svg.append('g')
-            .attr('class', 'x-axis')
+        if (displayXAxisPlotting)
             /*
-                The transform attribute is used to position the axis correctly. By translating
-                the group to the bottom of the SVG (translate(0,${height})), the x-axis is
-                placed along the bottom edge of the chart area.
+                The append('g') method adds a new group element to the SVG. This group element
+                will contain all the parts of the x-axis (ticks, labels, etc.).
             */
-            .attr('transform', `translate(0,${height})`)
-            /*
-                The .call(xAxis) method applies the axis generator to the group element. This
-                method draws the x-axis based on the scale and configuration provided to
-                d3.axisBottom(x).
-            */
-            .call(xAxis);
+            svg.append('g')
+                .attr('class', 'x-axis')
+                /*
+                    The transform attribute is used to position the axis correctly. By translating
+                    the group to the bottom of the SVG (translate(0,${height})), the x-axis is
+                    placed along the bottom edge of the chart area.
+                */
+                .attr('transform', `translate(0,${height})`)
+                /*
+                    The .call(xAxis) method applies the axis generator to the group element. This
+                    method draws the x-axis based on the scale and configuration provided to
+                    d3.axisBottom(x).
+                */
+                .call(xAxis);
 
-        // svg.append('g'): Adds a new group element to the SVG.
-        svg.append('g')
-            // .attr('class', 'y-axis'): Sets the class for CSS styling and targeting.
-            .attr('class', 'y-axis')
-            // .call(yAxis): Draws the y-axis using the yAxis generator function.
-            .call(yAxis);
+        if (displayYAxisPlotting)
+            // svg.append('g'): Adds a new group element to the SVG.
+            svg.append('g')
+                // .attr('class', 'y-axis'): Sets the class for CSS styling and targeting.
+                .attr('class', 'y-axis')
+                // .call(yAxis): Draws the y-axis using the yAxis generator function.
+                .call(yAxis);
+
         /*
           Define line generators
           d3.line(): Creates a line generator function.
         */
         const line = d3.line()
-            // .x(d => x(d.week)): Maps data values to x-coordinates using the x scale.
-            .x(d => x(d.week))
+            // .x(d => x(d[xAxisColumn])): Maps data values to x-coordinates using the x scale.
+            .x(d => x(d[xAxisColumn]))
             // .y(d => y(d.value)): Maps data values to y-coordinates using the y scale.
             .y(d => y(d.value));
 
         /*
-            This code creates and configures three separate line paths for a line chart
+            This code creates and configures  separate line paths for a line chart
             within the SVG element. Each line represents a different data series
-            (amount1, amount2, amount3).        
+            (amount1, amount2, amount3......).
         */
-        const amountLines = {
-            amount1: svg.append('path')
+        // Create line paths
+        const amountLines = {};
+        columns.forEach((column, i) => {
+            amountLines[column] = svg.append('path')
                 .attr('class', 'line')
-                .attr('fill', 'none')
-                .style('stroke', 'blue'),
-            amount2: svg.append('path')
-                .attr('class', 'line')
-                .attr('fill', 'none')
-                .style('stroke', 'red'),
-            amount3: svg.append('path')
-                .attr('class', 'line')
-                .attr('fill', 'none')
-                .style('stroke', 'green')
-        };
+                .style('stroke', d3.schemeCategory10[i % 10]);
+        });
+
+        // Create dynamic checkboxes and legends
+        const checkboxContainer = d3.select('.checkbox-container');
+
+        columns.forEach((column, i) => {
+            checkboxContainer.append('label')
+                .html(`<input type="checkbox" checked id="checkbox-${column}"> <span style="color: ${d3.schemeCategory10[i % 10]};">&#9679;</span>  ${column}`)
+                .style('display', 'block');
+        });
 
         /*
             Update function for lines 
@@ -192,39 +213,32 @@ function multipleLineChart(source, chartLocation, width, height, margin) {
             of the checkboxes.
         */
         function updateLines() {
-            const selectedLines = [];
-
-            if (document.getElementById('checkbox-amount1').checked) {
-                selectedLines.push({ key: 'amount1', color: 'blue' });
-            }
-            if (document.getElementById('checkbox-amount2').checked) {
-                selectedLines.push({ key: 'amount2', color: 'red' });
-            }
-            if (document.getElementById('checkbox-amount3').checked) {
-                selectedLines.push({ key: 'amount3', color: 'green' });
-            }
+            const selectedLines = columns.filter(
+                col => document.getElementById(`checkbox-${col}`).checked
+            );
 
             // It hides or shows each line accordingly.
-            Object.keys(amountLines).forEach(key => {
-                amountLines[key].style('display', selectedLines.find(l => l.key === key) ? null : 'none');
+            columns.forEach(column => {
+                amountLines[column].style('visibility', selectedLines.includes(column) ? 'visible' : 'hidden');
             });
+
             // It updates the path data and color of each visible line to reflect the current
             // data and styling preferences.
-            selectedLines.forEach(lineData => {
-                amountLines[lineData.key]
-                    .datum(data.map(d => ({ week: d.week, value: d[lineData.key] })))
+            selectedLines.forEach(column => {
+                amountLines[column]
+                    .datum(data.map(d => ({ [xAxisColumn]: d[xAxisColumn], value: d[column] })))
                     .attr('d', line)
-                    .style('stroke', lineData.color);
+                    .style('stroke', d3.schemeCategory10[columns.indexOf(column) % 10]);
             });
         }
 
         // Initial rendering of lines
         updateLines();
 
-        // Add event listeners to checkboxes.
-        document.getElementById('checkbox-amount1').addEventListener('change', updateLines);
-        document.getElementById('checkbox-amount2').addEventListener('change', updateLines);
-        document.getElementById('checkbox-amount3').addEventListener('change', updateLines);
+        // Add event listeners to checkboxes
+        columns.forEach(column => {
+            document.getElementById(`checkbox-${column}`).addEventListener('change', updateLines);
+        });
     }).catch(error => {
         console.error('Error loading or parsing data:', error);
     });
