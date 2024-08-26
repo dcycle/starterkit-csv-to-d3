@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Multiple line Pie  chart</title>
+  </head>
+  <body>
+    <h1>Multiple amounts pie chart</h1>
+    <p>Display data/line-chart-multiple-lines.csv as a multiple amounts aggregated pie chart.</p>
+    <p>If multiple amounts columns exist in csv then sum of the each column calculated and represent in pie chart</p>
+    <p>On Mouse over each segment to see the label.</p>
+    <div style="margin-top: 100px;">
+      <div id="chart-goes-here" class="chart-enclosure"></div>
+    </div>
+    <script type="text/javascript" src="//d3js.org/d3.v7.min.js"></script>
+    <script type="text/javascript" src="pie-chart-multiple-amount-aggregated.js"></script>
+    <script type="text/javascript">
+      /*
+        Set dimensions
+        Margins provide padding around the chart, ensuring
+        that axis labels and titles are not crowded or clipped.
+        They also prevent data points from being too close to
+        the edges of the chart.
+      */
+      const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+      /*
+        Width and Height determine the size of the area where
+        the actual chart is drawn. These values are derived by
+        subtracting the margins from the total SVG dimensions,
+        giving you the drawable area for your chart elements
+        (like lines, points, and axes).
+        Define margins, width, and height
+      */
+      const width = 1200 - margin.left - margin.right;
+      const height = 400 - margin.top - margin.bottom;
+
+      multipleAmountsPieChart(
+        // 'data/line-chart-multiple-lines.csv',
+        './data/multivalued-1000-rows-20-columns.csv',
+        '#chart-goes-here',
+        width,
+        height
+      );
+    </script>
+  </body>
+</html>
