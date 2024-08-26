@@ -68,8 +68,8 @@ function multipleAmountsPieChart(
         const arc = d3.arc().outerRadius(radius - 10).innerRadius(0);
 
         ///// Arc Labels /////
-        // Calculate position
-        var pos = d3.arc().innerRadius(radius + 30).outerRadius(radius + 30);
+        // Label positioning
+        const labelArc = d3.arc().outerRadius(radius-12).innerRadius(radius+2);
 
         // Select all elements with the class 'arc' within the SVG, which
         // will be used for the pie chart slices.
@@ -97,7 +97,7 @@ function multipleAmountsPieChart(
         g.append('text')
             // Set the 'transform' attribute to position the text. Use the
             // 'arc.centroid(d)' function to get the coordinates of the center of each slice.
-            .attr("transform", function(d) { return "translate(" + pos.centroid(d) + ")"; })
+            .attr('transform', function(d) { return `translate(${labelArc.centroid(d)})`; })
             // Set the vertical alignment of the text. '.35em' adjusts the position
             // slightly to center the text vertically within the slice.
             .attr('dy', '.35em')
