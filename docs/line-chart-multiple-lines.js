@@ -34,7 +34,7 @@
         existing HTML element where the SVG will be inserted.
         For example, it might be a string like "#chart" to select
         an element with the ID chart.
-    */
+    */    
     const svg = d3.select(chartLocation).append("svg")
         /*
             Sets the width of the SVG element.
@@ -44,7 +44,7 @@
         /*
             Sets the height of the SVG element.
             Total height including margins then only x,y axis rendered completely inside chart.
-        */
+        */        
         .attr("height", height + margin.top + margin.bottom)
         /*
             append("g") Appends a group element (<g>) to the SVG container.
@@ -54,13 +54,13 @@
             styling to a collection of elements. By appending this 
             <g> element, you create a group that can be transformed or
             styled as a unit.
-        */
+        */        
         .append("g")
         /*
             .attr("transform", translate(${margin.left},${margin.top})): 
             Moves the group element to account for margins, so the
             actual chart area starts after the margin space.
-        */
+        */        
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Read the CSV file.
@@ -84,7 +84,7 @@
             a linear scale. Linear scales map numerical data values to
             a continuous range of pixel values. It’s used for axes
             where the data is distributed in a linear fashion.
-        */
+        */        
         const x = d3.scaleLinear()
             /*
                 d3.extent(data, d => d[xAxisColumn]) calculates the
@@ -96,7 +96,7 @@
                 d3.extent returns an array with two values: the minimum 
                 and maximum values in the dataset for the specified key.
                 This array sets the domain of the scale.
-            */
+            */        
             .domain(d3.extent(data, d => d[xAxisColumn]))
             /*
                 range specifies the range of pixel values the data values will be mapped to.
@@ -122,7 +122,7 @@
                 This setup is particularly useful in line charts where you want the y-axis
                 to dynamically adjust to the range of values in your data, ensuring that all
                 lines fit well within the chart’s vertical space.
-            */
+            */        
             .domain([0, d3.max(data, d => d3.max(columns, col => d[col]))])
             /*
                .range([height, 0]) sets the output range of the scale.
@@ -137,26 +137,26 @@
             .ticks(data.length): Configures the axis to have tick marks for each
             data point in the dataset, which helps in clearly displaying and aligning
             the data points along the x-axis.
-        */
+        */            
         const xAxis = d3.axisBottom(x).ticks(data.length);
         /*
             d3.axisLeft(y): Creates a vertical axis positioned on the left side of the SVG,
             using the y scale function to map data values to pixel positions.
-        */
+        */        
         const yAxis = d3.axisLeft(y);
 
         if (displayXAxisPlotting) {
             /*
                 The append('g') method adds a new group element to the SVG. This group element
                 will contain all the parts of the x-axis (ticks, labels, etc.).
-            */
+            */            
             svg.append('g')
                 .attr('class', 'x-axis')
                 /*
                     The transform attribute is used to position the axis correctly. By translating
                     the group to the bottom of the SVG (translate(0,${height})), the x-axis is
                     placed along the bottom edge of the chart area.
-                */
+                */                
                 .attr('transform', `translate(0,${height})`)
                 /*
                     The .call(xAxis) method applies the axis generator to the group element. This
@@ -265,7 +265,7 @@
             Update function for lines 
             The function first determines which lines should be visible based on the state
             of the checkboxes.
-        */
+        */            
         function updateLines() {
             const selectedLines = columns.filter(col => document.getElementById(`checkbox-${col}`).checked);
 
