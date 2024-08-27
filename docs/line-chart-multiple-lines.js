@@ -111,7 +111,7 @@
         /*
             Linear scales map numerical data values to
             a continuous range of pixel values 
-        */            
+        */
         let y = d3.scaleLinear()
             /*
                 The .domain() method defines the input range for the scale.
@@ -162,7 +162,7 @@
                     The .call(xAxis) method applies the axis generator to the group element. This
                     method draws the x-axis based on the scale and configuration provided to
                     d3.axisBottom(x).
-                */                
+                */
                 .call(xAxis)
                 .attr('stroke', '#333')
                 .attr('fill', 'none');
